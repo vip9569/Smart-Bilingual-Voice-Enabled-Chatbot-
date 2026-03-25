@@ -15,10 +15,10 @@ const app = express();
 app.use(express.json());
 
 // Cors middleware 
-// const corsOptions = {
-//     origin: 'http://localhost:5173', // Specify the exact origin
-// };
-app.use(cors("http://localhost:5173"))
+const corsOptions = {
+    origin: [process.env.ORIGIN_URL, 'http://localhost:5174'] // Specify the exact origin
+};
+app.use(cors(corsOptions))
 
 // Mount the routes
 app.use('/api/intents', intentRouter);

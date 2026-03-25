@@ -35,7 +35,7 @@ export const getMatchingResponse = async (req, res) => {
         const phrases = await IntentPhrase.find({ isActive: true });
 
         let bestMatch = 0;
-        let bestScore = 0.50;
+        let bestScore = 0.65;
 
         for (const phrase of phrases) {
 

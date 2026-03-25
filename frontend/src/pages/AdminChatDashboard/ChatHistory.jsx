@@ -41,7 +41,8 @@ export default function ChatHistory() {
                         <div className="flex justify-between items-center flex-wrap gap-3">
                             <div>
                                 <h3 className="text-lg font-semibold">
-                                    {user.name}
+                                    {/* {user.name} */}
+                                    User1
                                 </h3>
                                 <p className="text-sm text-gray-500 mt-1">
                                     Last message: {user.lastMessage}
@@ -65,7 +66,8 @@ export default function ChatHistory() {
                         {/* Header */}
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-semibold">
-                                {selectedUser.name}'s Chats
+                                {/*  {selectedUser.name} */}
+                                User1's Chats
                             </h3>
                             <button onClick={() => setSelectedUser(null)}>
                                 <X size={20} />
