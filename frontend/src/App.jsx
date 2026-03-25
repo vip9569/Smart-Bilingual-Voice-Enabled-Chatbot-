@@ -1,5 +1,5 @@
 import './index.css'
-import ChatWindow from './components/chatBot/ChatWindow';
+import ChatWindow from './components/chatbot/ChatWindow';
 import AdminDashboard from './pages/AdminChatDashboard/AdminDashboard';
 
 function App() {
