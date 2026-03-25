@@ -6,7 +6,7 @@
     "chatbot"
   ],
   "license": "ISC",
-  "author": "Ankit Kumar Singh",
+  "author": "Vikas Yadav",
   "type": "module",
   "main": "server.js",
   "scripts": {
