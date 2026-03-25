@@ -2,9 +2,6 @@ import mongoose from "mongoose";
 
 const intentSchema = new mongoose.Schema(
     {
-        id: {
-
-        },
         intentName: {       // intentName : "Payment"
             type: String,
             required: true,
@@ -24,9 +21,8 @@ const intentSchema = new mongoose.Schema(
         },
 
         status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "active"
+            type: Boolean,
+            default: true,
         }
     },
     {

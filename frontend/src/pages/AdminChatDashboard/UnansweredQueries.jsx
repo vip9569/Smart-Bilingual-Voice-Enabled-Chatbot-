@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus, X, Trash2 } from "lucide-react";
 import axios from "axios";
+import AddIntentForm from "./AddIntentForm";
 
 export default function UnansweredQuestions() {
     const [questions, setQuestions] = useState([]);
@@ -8,13 +9,12 @@ export default function UnansweredQuestions() {
     const [selected, setSelected] = useState(null);
 
     const [form, setForm] = useState({
-        question: "",
-        category: "",
-        tags: "",
+        intentName: "",
+        description: "",
+        intentPhrase: "",
         responseHindi: "",
         responseEnglish: "",
-        priority: 1,
-        active: true
+        status: "",
     });
 
     useEffect(() => {
@@ -25,6 +25,7 @@ export default function UnansweredQuestions() {
         try {
             const res = await axios.get("http://localhost:5000/api/admin/unanswered-queries");
             setQuestions(res.data);
+            console.log(res.data)
             setLoading(false);
         } catch (err) {
             console.error(err);
@@ -35,32 +36,58 @@ export default function UnansweredQuestions() {
     const openModal = (q) => {
         setSelected(q);
         setForm({
-            question: q.question,
-            category: "",
-            tags: "",
+            intentName: "",
+            description: "",
+            intentPhrase: q.query,
             responseHindi: "",
             responseEnglish: "",
-            priority: 1,
-            active: true
+            status: true,
         });
     };
 
-    const addToDatabase = async () => {
-        await axios.post("/api/suggestions", {
-            ...form,
-            tags: form.tags.split(",").map(t => t.trim())
+    const handleAddFromUnanswered = async (form) => {
+        if (!form.intentName || !form.description || !form.intentPhrase || !form.intentPhrase || !form.responseHindi || !form.responseEnglish) {
+            alert("All fields are required !")
+            return;
+        }
+        const newIntent = {
+            intentName: form.intentName.trim(),
+            description: form.description.trim(),
+            intentPhrase: form.intentPhrase,
+            response: {
+                hi: form.responseHindi,
+                en: form.responseEnglish
+            },
+            status: form.status
+        };
+        try {
+            const result = await axios.post("http://localhost:5000/api/intents/add-intents", newIntent)
+
+            console.log(result.data)
+
+            setSelected(null)
+            fetchUnanswered()
+        } catch (error) {
+            console.log(error)
+        }
+
+        // setIntents([...intents, newIntent]);
+        // setShowModal(false);
+        setForm({
+            intentName: "",
+            description: "",
+            intentPhrase: "",
+            responseHindi: "",
+            responseEnglish: "",
+            status: true,
         });
-
-        await axios.delete(`/api/unanswered/${selected._id}`);
-
-        setSelected(null);
-        fetchUnanswered();
     };
 
     const ignoreQuestion = async (id) => {
         await axios.delete(`http://localhost:5000/api/admin/delete-query/${id}`);
         fetchUnanswered();
     };
+
 
     return (
         <div className="p-6 w-full">
@@ -93,8 +120,8 @@ export default function UnansweredQuestions() {
 
                                     <div className="text-sm text-gray-500 space-y-1">
                                         <p>Asked {q.count} times</p>
-                                        <p>First Asked: {new Date(q.firstAsked).toLocaleString()}</p>
-                                        <p>Last Asked: {new Date(q.lastAsked).toLocaleString()}</p>
+                                        <p>First Asked: {new Date(q.createdAt).toLocaleString()}</p>
+                                        <p>Last Asked: {new Date(q.updatedAt).toLocaleString()}</p>
                                     </div>
                                 </div>
 
@@ -123,93 +150,17 @@ export default function UnansweredQuestions() {
 
             {/* Modal */}
             {selected && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4">
-                    <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto">
+                <AddIntentForm
+                    form={form}
+                    setForm={setForm}
+                    edit={false}
+                    onClose={() => setSelected(null)}
+                    onSubmit={handleAddFromUnanswered} />
 
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">
-                                Add Suggested Question
-                            </h3>
-                            <button onClick={() => setSelected(null)}>
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        <textarea
-                            className="w-full p-3 border rounded-lg mb-4"
-                            value={form.question}
-                            onChange={(e) =>
-                                setForm({ ...form, question: e.target.value })
-                            }
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Category"
-                            className="w-full p-2 border rounded-lg mb-4"
-                            onChange={(e) =>
-                                setForm({ ...form, category: e.target.value })
-                            }
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Tags (comma separated)"
-                            className="w-full p-2 border rounded-lg mb-4"
-                            onChange={(e) =>
-                                setForm({ ...form, tags: e.target.value })
-                            }
-                        />
-
-                        <textarea
-                            placeholder="Response (Hindi)"
-                            className="w-full p-3 border rounded-lg mb-3"
-                            onChange={(e) =>
-                                setForm({ ...form, responseHindi: e.target.value })
-                            }
-                        />
-
-                        <textarea
-                            placeholder="Response (English)"
-                            className="w-full p-3 border rounded-lg mb-4"
-                            onChange={(e) =>
-                                setForm({ ...form, responseEnglish: e.target.value })
-                            }
-                        />
-
-                        <div className="flex gap-4 mb-4">
-                            <input
-                                type="number"
-                                placeholder="Priority"
-                                className="p-2 border rounded-lg w-1/2"
-                                onChange={(e) =>
-                                    setForm({ ...form, priority: e.target.value })
-                                }
-                            />
-
-                            <label className="flex items-center gap-2">
-                                Active
-                                <input
-                                    type="checkbox"
-                                    checked={form.active}
-                                    onChange={(e) =>
-                                        setForm({ ...form, active: e.target.checked })
-                                    }
-                                />
-                            </label>
-                        </div>
-
-                        <button
-                            onClick={addToDatabase}
-                            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
-                        >
-                            Save & Publish
-                        </button>
-
-                    </div>
-                </div>
             )}
 
         </div>
+
+
     );
 }

@@ -96,16 +96,51 @@ export default function ChatWindow() {
         setIsRecording(false);
     };
 
+    // const uploadAudio = async (blob) => {
+    //     const formData = new FormData();
+    //     formData.append("audio", blob, "recording.webm");
+
+    //     await fetch("/upload-audio", {
+    //         method: "POST",
+    //         body: formData,
+    //     });
+
+    //     console.log("Audio uploaded");
+    // };
     const uploadAudio = async (blob) => {
         const formData = new FormData();
         formData.append("audio", blob, "recording.webm");
 
-        await fetch("/upload-audio", {
+        const res = await fetch("http://localhost:5000/api/chat/voice-to-text", {
             method: "POST",
             body: formData,
         });
 
-        console.log("Audio uploaded");
+        const data = await res.json();
+
+        console.log("Text:", data.text);
+
+        // save voice to text message as user message in chatbot window
+        const newMessage = {
+            sender: "user",
+            text: data.text
+        };
+
+        setMessages(prev => [...prev, newMessage]);
+
+        setUserMessage("");
+
+        // send to chatbot
+        const msg = await axios.post("http://localhost:5000/api/chat/message", {
+            query: data.text
+        });
+
+        const botMessage = {
+            sender: "bot",
+            text: msg.data.response
+        };
+
+        setMessages(prev => [...prev, botMessage]);
     };
 
 

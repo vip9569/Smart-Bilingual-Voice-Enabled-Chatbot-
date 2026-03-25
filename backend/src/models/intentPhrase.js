@@ -10,7 +10,7 @@ const intentPhraseSchema = new mongoose.Schema(
 
         version: {
             type: Number,
-            required: false
+            required: true
         },
 
         phrase: {
@@ -21,6 +21,10 @@ const intentPhraseSchema = new mongoose.Schema(
         embedding: {
             type: [Number],
             required: true
+        },
+        isActive: {
+            type: Boolean,
+            default: true
         }
     },
     {

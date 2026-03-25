@@ -1,46 +1,62 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios";
 
 export default function ChatHistory() {
     const [selectedUser, setSelectedUser] = useState(null);
 
     // Dummy Data (Replace with API later)
-    const users = [
-        {
-            id: 1,
-            name: "Rahul Sharma",
-            lastMessage: "Thank you!",
-            lastActive: "Today, 10:45 AM",
-            totalMessages: 12,
-            chats: [
-                {
-                    date: "2024-02-15",
-                    messages: [
-                        { sender: "user", text: "Hello", time: "10:30 AM" },
-                        { sender: "bot", text: "Hi! How can I help you?", time: "10:31 AM" },
-                        { sender: "user", text: "I want help with my order.", time: "10:32 AM" },
-                        { sender: "bot", text: "Sure! Please share order ID.", time: "10:33 AM" }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: "Anita Verma",
-            lastMessage: "Order confirmed",
-            lastActive: "Yesterday",
-            totalMessages: 8,
-            chats: [
-                {
-                    date: "2024-02-14",
-                    messages: [
-                        { sender: "user", text: "Is my order shipped?", time: "09:00 AM" },
-                        { sender: "bot", text: "Yes, it has been shipped.", time: "09:02 AM" }
-                    ]
-                }
-            ]
+    const [users, setUsers] = useState([])
+    // [
+    //     {
+    //         id: 1,
+    //         name: "Rahul Sharma",
+    //         lastMessage: "Thank you!",
+    //         lastActive: "Today, 10:45 AM",
+    //         totalMessages: 12,
+    //         chats: [
+    //             {
+    //                 date: "2024-02-15",
+    //                 messages: [
+    //                     { sender: "user", text: "Hello", time: "10:30 AM" },
+    //                     { sender: "bot", text: "Hi! How can I help you?", time: "10:31 AM" },
+    //                     { sender: "user", text: "I want help with my order.", time: "10:32 AM" },
+    //                     { sender: "bot", text: "Sure! Please share order ID.", time: "10:33 AM" }
+    //                 ]
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Anita Verma",
+    //         lastMessage: "Order confirmed",
+    //         lastActive: "Yesterday",
+    //         totalMessages: 8,
+    //         chats: [
+    //             {
+    //                 date: "2024-02-14",
+    //                 messages: [
+    //                     { sender: "user", text: "Is my order shipped?", time: "09:00 AM" },
+    //                     { sender: "bot", text: "Yes, it has been shipped.", time: "09:02 AM" }
+    //                 ]
+    //             }
+    //         ]
+    //     }
+    // ];
+
+    const loadUsers = async () => {
+        try {
+            const result = await axios.get("http://localhost:5000/api/admin/history")
+            console.log(result.data)
+            setUsers(result.data)
+        } catch (error) {
+            console.log(error)
         }
-    ];
+    }
+
+    useState(() => {
+        loadUsers()
+    }, [])
 
     return (
         <div className="p-6 w-full">

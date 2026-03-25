@@ -65,7 +65,8 @@ export default function SuggestedQuestions() {
                     Suggested Questions
                 </h2>
 
-                <button className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                <button
+                    className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
                     <Plus size={18} />
                     New <span className="inline sm:hidden md:hidden">Question</span>
                 </button>

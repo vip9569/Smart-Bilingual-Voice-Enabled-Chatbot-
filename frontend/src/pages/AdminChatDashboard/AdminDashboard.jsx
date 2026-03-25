@@ -32,8 +32,6 @@ export default function AdminDashboard() {
                 return <Dashboard />;
             case "Intents":
                 return <Intents />;
-            case "Questions":
-                return <Questions />;
             case "Unanswered Queries":
                 return <UnansweredQueries />;
             case "Suggested Questions":
@@ -50,7 +48,7 @@ export default function AdminDashboard() {
 
             {/* Sidebar */}
             <div
-                className={`bg-white shadow-xl transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"
+                className={`bg-white shadow-xl transition-all duration-300 ${sidebarOpen ? "w-64" : " sm:w-20 w-20"
                     }`}
             >
                 <div className="flex items-center justify-between p-4 border-b">
@@ -86,13 +84,13 @@ export default function AdminDashboard() {
                         onClick={() => setActive("Responses")}
                         open={sidebarOpen}
                     /> */}
-                    <SidebarItem
+                    {/* <SidebarItem
                         icon={CircuitBoard}
                         label="Questions"
                         active={active === "Questions"}
                         onClick={() => setActive("Questions")}
                         open={sidebarOpen}
-                    />
+                    /> */}
                     <SidebarItem
                         icon={NotebookTabs}
                         label="Suggested Questions"

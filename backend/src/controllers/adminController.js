@@ -1,5 +1,5 @@
 import UnAnsweredQueries from "../models/unAnsweredQueries.js"
-
+import Message from "../models/messageHistory.js";
 
 // fetch List of all un answered queries
 export const getAllUnansweredQueries = async (req, res) => {
@@ -35,3 +35,73 @@ export const deleteQuery = async (req, res) => {
         return res.status(500).json({ message: `Server Error ${error.message}` })
     }
 }
+
+// Chat History controller 
+export const getChatHistory = async (req, res) => {
+    try {
+
+        const messages = await Message.find().sort({ createdAt: 1 });
+
+        const userChats = {};
+
+        messages.forEach((msg) => {
+
+            const date = msg.createdAt.toISOString().split("T")[0];
+            const time = msg.createdAt.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+
+            if (!userChats[msg.userId]) {
+                userChats[msg.userId] = {
+                    id: msg.userId,
+                    name: msg.userId,
+                    lastMessage: msg.botResponse,
+                    lastActive: msg.createdAt,
+                    totalMessages: 0,
+                    chats: {}
+                };
+            }
+
+            if (!userChats[msg.userId].chats[date]) {
+                userChats[msg.userId].chats[date] = [];
+            }
+
+            // Push user message
+            userChats[msg.userId].chats[date].push({
+                sender: "user",
+                text: msg.userMessage,
+                time
+            });
+
+            // Push bot response
+            userChats[msg.userId].chats[date].push({
+                sender: "bot",
+                text: msg.botResponse,
+                time
+            });
+
+            userChats[msg.userId].totalMessages += 2;
+
+        });
+
+        const formattedData = Object.values(userChats).map(chat => ({
+            ...chat,
+            chats: Object.keys(chat.chats).map(date => ({
+                date,
+                messages: chat.chats[date]
+            }))
+        }));
+
+        res.status(200).json(formattedData);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Error fetching chat history"
+        });
+
+    }
+};

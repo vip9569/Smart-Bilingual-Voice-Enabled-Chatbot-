@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema(
         conversationId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Conversation",
-            required: true
+            required: false
         },
 
         userId: {
@@ -33,6 +33,10 @@ const messageSchema = new mongoose.Schema(
 
         similarityScore: {
             type: Number
+        },
+
+        language: {
+            type: String,
         },
 
         source: {

@@ -9,17 +9,17 @@ import express from 'express';
 
 
 import {
+    audioToText,
     getMatchingResponse
 } from '../controllers/chatController.js';
 
 const chatRouter = express.Router();
 
-// chatRouter.post("/message", getResponse)
+
 chatRouter.post("/message", getMatchingResponse)
-// intentRouter.get("/getIntentById/:id", getIntentById)
-// intentRouter.post("/addIntent", createIntent)
-// intentRouter.put("/updateIntent/:id", updateIntent)
-// intentRouter.delete("/delete/:id", deleteIntent)
+
+chatRouter.post("/voice-to-text", audioToText)
+
 
 
 export default chatRouter;

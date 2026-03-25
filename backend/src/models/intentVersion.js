@@ -12,11 +12,15 @@ const intentVersionSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
+        isActive: {
+            type: Boolean,
+            default: true
+        },
 
         response: {
             en: {
                 type: String,
-                rewuired: true
+                required: true
             },
 
             hi: {
