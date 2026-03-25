@@ -33,7 +33,7 @@ export default function ChatWindow() {
         setUserMessage("");
 
         const result = await axios.post(
-            "http://localhost:5000/api/chat/message",
+            `${import.meta.env.VITE_SERVER_URL}/api/chat/message`,
             { query: userMessage }
         );
 
@@ -111,7 +111,7 @@ export default function ChatWindow() {
         const formData = new FormData();
         formData.append("audio", blob, "recording.webm");
 
-        const res = await fetch("http://localhost:5000/api/chat/voice-to-text", {
+        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/chat/voice-to-text`, {
             method: "POST",
             body: formData,
         });
@@ -131,7 +131,7 @@ export default function ChatWindow() {
         setUserMessage("");
 
         // send to chatbot
-        const msg = await axios.post("http://localhost:5000/api/chat/message", {
+        const msg = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/chat/message`, {
             query: data.text
         });
 

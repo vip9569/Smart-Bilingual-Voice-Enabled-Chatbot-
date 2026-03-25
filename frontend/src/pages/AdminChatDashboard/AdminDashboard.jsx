@@ -77,20 +77,7 @@ export default function AdminDashboard() {
                         onClick={() => setActive("Intents")}
                         open={sidebarOpen}
                     />
-                    {/* <SidebarItem
-                        icon={MessageCircleReply}
-                        label="Responses"
-                        active={active === "Responses"}
-                        onClick={() => setActive("Responses")}
-                        open={sidebarOpen}
-                    /> */}
-                    {/* <SidebarItem
-                        icon={CircuitBoard}
-                        label="Questions"
-                        active={active === "Questions"}
-                        onClick={() => setActive("Questions")}
-                        open={sidebarOpen}
-                    /> */}
+
                     <SidebarItem
                         icon={NotebookTabs}
                         label="Suggested Questions"

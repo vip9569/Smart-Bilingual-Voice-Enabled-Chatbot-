@@ -23,7 +23,7 @@ export default function UnansweredQuestions() {
 
     const fetchUnanswered = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/admin/unanswered-queries");
+            const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/admin/unanswered-queries`);
             setQuestions(res.data);
             console.log(res.data)
             setLoading(false);
@@ -61,7 +61,7 @@ export default function UnansweredQuestions() {
             status: form.status
         };
         try {
-            const result = await axios.post("http://localhost:5000/api/intents/add-intents", newIntent)
+            const result = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/intents/add-intents`, newIntent)
 
             console.log(result.data)
 
@@ -84,7 +84,7 @@ export default function UnansweredQuestions() {
     };
 
     const ignoreQuestion = async (id) => {
-        await axios.delete(`http://localhost:5000/api/admin/delete-query/${id}`);
+        await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/admin/delete-query/${id}`);
         fetchUnanswered();
     };
 

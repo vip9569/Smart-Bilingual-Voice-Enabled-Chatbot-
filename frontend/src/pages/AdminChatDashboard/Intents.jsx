@@ -39,9 +39,9 @@ export default function Intents() {
         };
         try {
             if (edit) {
-                const result = await axios.put(`http://localhost:5000/api/intents/update-intent/${editingId}`, newIntent)
+                const result = await axios.put(`${import.meta.env.VITE_SERVER_URL}/api/intents/update-intent/${editingId}`, newIntent)
             } else {
-                const result = await axios.post("http://localhost:5000/api/intents/add-intents", newIntent)
+                const result = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/intents/add-intents`, newIntent)
             }
             console.log(result.data)
             fetchAllIntents()
@@ -82,7 +82,7 @@ export default function Intents() {
 
     const deleteIntent = async (id) => {
         try {
-            const result = await axios.delete(`http://localhost:5000/api/intents/delete/${id}`)
+            const result = await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/intents/delete/${id}`)
             console.log(result.data)
         } catch (error) {
             console.log(error)
@@ -93,7 +93,7 @@ export default function Intents() {
     // fetch all the intents data when pages renders first
     const fetchAllIntents = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/api/intents/get-intents")
+            const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/intents/get-intents`)
             setIntents(response.data)
             console.log(response.data)
         } catch (error) {
