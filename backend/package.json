@@ -6,13 +6,14 @@
     "chatbot"
   ],
   "license": "ISC",
-  "author": "Ankit Kumar Singh",
+  "author": "Vikas Yadav",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "nodemon server.js"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
