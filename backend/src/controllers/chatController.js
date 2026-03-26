@@ -14,10 +14,108 @@ import ffmpegPath from "ffmpeg-static";
 import wav from "wav-decoder";
 import { pipeline } from "@xenova/transformers";
 
+export const getMatchingResponse = async (req, res) => {
+    try {
+        const query = req.body.query;
+
+        if (!query) {
+            return res.json({ response: "Please enter a query" });
+        }
+
+        console.log("Query:", query);
+
+        // ⚡ STEP 1: Get only required fields (faster query)
+        const phrases = await IntentPhrase.find({ isActive: true })
+            .select("embedding intentId")
+            .lean();
+
+        if (!phrases.length) {
+            return res.json({ response: "No data available" });
+        }
+
+        // ⚡ STEP 2: Use lightweight embedding (IMPORTANT)
+        let queryEmbedding;
+
+        try {
+            queryEmbedding = await generateEmbedding(query);
+        } catch (err) {
+            console.error("Embedding failed:", err.message);
+            return res.json({ response: "Processing error, try again" });
+        }
+
+        // ⚡ STEP 3: Fast similarity loop
+        let bestMatch = null;
+        let bestScore = 0.65;
+
+        for (const phrase of phrases) {
+            if (!phrase.embedding) continue;
+
+            const score = cosineSimilarity(queryEmbedding, phrase.embedding);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = phrase.intentId;
+            }
+        }
+
+        // ⚡ STEP 4: Handle no match
+        if (!bestMatch) {
+            await unAnsweredQueries.create({ query });
+
+            return res.json({
+                response: "Sorry, I didn't understand that."
+            });
+        }
+
+        // ⚡ STEP 5: Fetch response (optimized)
+        const responseDoc = await IntentVersion.findOne({
+            intentId: bestMatch,
+            isActive: true
+        }).lean();
+
+        if (!responseDoc) {
+            return res.json({ response: "No response found" });
+        }
+
+        // ⚡ STEP 6: Language detection (safe)
+        let lang = "en";
+        try {
+            lang = detectLanguage(query);
+        } catch (e) {
+            console.log("Language detection failed");
+        }
+
+        const reply =
+            lang === "en"
+                ? responseDoc.response.en
+                : responseDoc.response.hi;
+
+        // ⚡ STEP 7: Save history (non-blocking)
+        messageHistory.create({
+            userId: "1",
+            userMessage: query,
+            botResponse: reply,
+            language: lang === "en" ? "English" : "Hindi",
+            similarityScore: bestScore
+        }).catch(err => console.log("History error:", err));
+
+        return res.json({
+            intentId: bestMatch,
+            similarity: bestScore,
+            response: reply
+        });
+
+    } catch (error) {
+        console.error("Controller Error:", error);
+
+        return res.status(500).json({
+            message: "Server error",
+        });
+    }
+};
+
 // export const getMatchingResponse = async (req, res) => {
 //     try {
-
-
 //         const query = req.body.query;
 //         if (!query) {
 //             return res.json({
@@ -110,9 +208,9 @@ import { pipeline } from "@xenova/transformers";
 //     }
 // };
 
-export const getMatchingResponse = async (req, res)=>{
-    return res.status(200).json({response:"Backend is working perfectly"})
-}
+// export const getMatchingResponse = async (req, res)=>{
+//     return res.status(200).json({response:"Backend is working perfectly"})
+// }
 
 
 ffmpeg.setFfmpegPath(ffmpegPath);
