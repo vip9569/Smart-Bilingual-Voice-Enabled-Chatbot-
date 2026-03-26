@@ -15,10 +15,33 @@ const app = express();
 app.use(express.json());
 
 // Cors middleware 
-const corsOptions = {
-    origin: [process.env.ORIGIN_URL, 'http://localhost:5174'] // Specify the exact origin
-};
-app.use(cors(corsOptions))
+// const corsOptions = {
+//     origin: [process.env.ORIGIN_URL, 'http://localhost:5174'] // Specify the exact origin
+// };
+// app.use(cors(corsOptions))
+
+// Allowed origins (frontend URLs)
+const allowedOrigins = [
+    process.env.ORIGIN_URL,
+    "https://smart-bilingual-voice-enabled-chatbot-1.onrender.com",
+    "http://localhost:5174",
+];
+
+// CORS Middleware
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like Postman, mobile apps)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log("Blocked by CORS:", origin);
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
+}));
 
 // Mount the routes
 app.use('/api/intents', intentRouter);
