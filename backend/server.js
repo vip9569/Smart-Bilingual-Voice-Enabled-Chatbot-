@@ -14,11 +14,7 @@ const app = express();
 // Middleware to parse JSON bodies (Required for subdocuments to work!)
 app.use(express.json());
 
-// Cors middleware 
-// const corsOptions = {
-//     origin: [process.env.ORIGIN_URL, 'http://localhost:5174'] // Specify the exact origin
-// };
-// app.use(cors(corsOptions))
+
 
 // Allowed origins (frontend URLs)
 const allowedOrigins = [
