@@ -34,7 +34,7 @@ export default function ChatWindow() {
 
         const result = await axios.post(
             `${import.meta.env.VITE_SERVER_URL}/api/chat/message`,
-            { query: userMessage }
+            { query: userMessage }, {withCredentials:true}
         );
 
         const botMessage = {
