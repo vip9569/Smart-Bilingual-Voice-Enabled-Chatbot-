@@ -111,7 +111,7 @@ import { pipeline } from "@xenova/transformers";
 // };
 
 export const getMatchingResponse = async (req, res)=>{
-    return res.status(200).json({message:"Backend is working perfectly"})
+    return res.status(200).json({response:"Backend is working perfectly"})
 }
 
 
