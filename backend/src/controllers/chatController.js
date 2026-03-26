@@ -14,101 +14,105 @@ import ffmpegPath from "ffmpeg-static";
 import wav from "wav-decoder";
 import { pipeline } from "@xenova/transformers";
 
-export const getMatchingResponse = async (req, res) => {
-    try {
+// export const getMatchingResponse = async (req, res) => {
+//     try {
 
 
-        const query = req.body.query;
-        if (!query) {
-            return res.json({
+//         const query = req.body.query;
+//         if (!query) {
+//             return res.json({
 
-                // Then we have to return suggested answers which all are stored 
-                response: "I am not getting your query"
-            });
-        }
+//                 // Then we have to return suggested answers which all are stored 
+//                 response: "I am not getting your query"
+//             });
+//         }
 
-        // Generate embedding for user query
-        const queryEmbedding = await generateEmbedding(query);
-        // console.log(queryEmbedding)
+//         // Generate embedding for user query
+//         const queryEmbedding = await generateEmbedding(query);
+//         // console.log(queryEmbedding)
 
-        // Find best matching phrase
-        const phrases = await IntentPhrase.find({ isActive: true });
+//         // Find best matching phrase
+//         const phrases = await IntentPhrase.find({ isActive: true });
 
-        let bestMatch = 0;
-        let bestScore = 0.65;
+//         let bestMatch = 0;
+//         let bestScore = 0.65;
 
-        for (const phrase of phrases) {
+//         for (const phrase of phrases) {
 
-            const score = cosineSimilarity(queryEmbedding, phrase.embedding);
+//             const score = cosineSimilarity(queryEmbedding, phrase.embedding);
 
-            console.log(score)
+//             console.log(score)
 
-            if (score > bestScore) {
-                bestScore = score;
-                bestMatch = phrase.intentId;
-            }
+//             if (score > bestScore) {
+//                 bestScore = score;
+//                 bestMatch = phrase.intentId;
+//             }
 
-        }
+//         }
 
-        if (bestMatch === 0) {
+//         if (bestMatch === 0) {
 
-            // When best matching not found in already stored data then we will consider as un answered queries
-            await unAnsweredQueries.create({
-                query: query,
-                embedding: queryEmbedding
-            })
-            return res.json({
+//             // When best matching not found in already stored data then we will consider as un answered queries
+//             await unAnsweredQueries.create({
+//                 query: query,
+//                 embedding: queryEmbedding
+//             })
+//             return res.json({
 
-                // Then we have to return suggested answers which all are stored 
-                response: "No intent found"
-            });
-        }
+//                 // Then we have to return suggested answers which all are stored 
+//                 response: "No intent found"
+//             });
+//         }
 
-        // Get response from intentversion
-        const responseDoc = await IntentVersion.findOne({
-            intentId: bestMatch,
-            isActive: true
-        })  //.sort({ version: -1 });
+//         // Get response from intentversion
+//         const responseDoc = await IntentVersion.findOne({
+//             intentId: bestMatch,
+//             isActive: true
+//         })  //.sort({ version: -1 });
 
-        if (!responseDoc) {
-            return res.json({
-                response: "No response found"
-            });
-        }
+//         if (!responseDoc) {
+//             return res.json({
+//                 response: "No response found"
+//             });
+//         }
 
-        // Detect the language of query
-        const lang = detectLanguage(query) // Example output: [ [ 'english', 0.9955 ] ]
-        // console.log(lang)
+//         // Detect the language of query
+//         const lang = detectLanguage(query) // Example output: [ [ 'english', 0.9955 ] ]
+//         // console.log(lang)
 
-        const reply = lang === 'en' ? responseDoc.response.en : responseDoc.response.hi
-        // Return response
-        await messageHistory.create({
-            userId: "1",
-            userMessage: query,
-            botResponse: reply,
-            // detectedIntent,
-            // intentVersion,
-            language: lang === 'en' ? "English" : "Hindi",
-            similarityScore: bestScore,
-            // source
-        })
+//         const reply = lang === 'en' ? responseDoc.response.en : responseDoc.response.hi
+//         // Return response
+//         await messageHistory.create({
+//             userId: "1",
+//             userMessage: query,
+//             botResponse: reply,
+//             // detectedIntent,
+//             // intentVersion,
+//             language: lang === 'en' ? "English" : "Hindi",
+//             similarityScore: bestScore,
+//             // source
+//         })
 
-        return res.json({
-            intentId: bestMatch,
-            similarity: bestScore,
-            response: lang === 'en' ? responseDoc.response.en : responseDoc.response.hi
-        });
+//         return res.json({
+//             intentId: bestMatch,
+//             similarity: bestScore,
+//             response: lang === 'en' ? responseDoc.response.en : responseDoc.response.hi
+//         });
 
-    } catch (error) {
+//     } catch (error) {
 
-        console.error(error);
+//         console.error(error);
 
-        return res.status(500).json({
-            message: error.message
-        });
+//         return res.status(500).json({
+//             message: error.message
+//         });
 
-    }
-};
+//     }
+// };
+
+export const getMatchingResponse = async (req, res)=>{
+    return res.status(200).json({message:"Backend is working perfectly"})
+}
 
 
 ffmpeg.setFfmpegPath(ffmpegPath);
